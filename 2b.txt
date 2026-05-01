@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+int my_sys(const char *cm){
+    pid_t pid = fork();
+    if (pid == 0){
+        execl("/bin/sh", "sh", "-c", cm, (char *)0);
+        exit(1);
+    }
+    int st;
+    waitpid(pid, &st, 0);
+    return WIFEXITED(st) ? WEXITSTATUS(st) : -1;
+}
+int main(){
+    printf("executing ls -li\n");
+    printf("exited with status %d\n", my_sys("ls -li"));
+    return 0;
+}

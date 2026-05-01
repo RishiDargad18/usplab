@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <sys/stat.h>
+void remove_empty_files(const char *dir) {
+    DIR *dp = opendir(dir);
+    struct dirent *e;
+    if (!dp) return;
+    while ((e = readdir(dp))) {
+        if (!strcmp(e->d_name, ".") || !strcmp(e->d_name, "..")) continue;
+
+        char path[1024];
+        snprintf(path, sizeof(path), "%s/%s", dir, e->d_name);
+        int fd = open(path, O_RDONLY);
+        if (fd < 0) continue;
+        if (lseek(fd, 0, SEEK_END) == 0) {
+            if (!unlink(path))
+                printf("Removed empty file: %s\n", path);
+        }
+        close(fd);
+    }
+    closedir(dp);
+}
+int main(int argc, char *argv[]) {
+    remove_empty_files(argv[1]);
+    return 0;
+}

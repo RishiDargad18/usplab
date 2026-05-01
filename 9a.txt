@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+int main() {
+    mode_t old = umask(0022);
+    printf("Old umask was: %03o, new umask is: %03o\n", old, 0022);
+    int fd = open("t1.txt", O_CREAT | O_WRONLY, 0777);
+    if (fd < 0) {
+        perror("open");
+        return 1;
+    }
+    close(fd);
+    if (chmod("t1.txt", 0644) < 0) {
+        perror("chmod");
+        return 1;
+    }
+    printf("Changed permissions of %s to %03o\n", "t1.txt", 0644);
+    return 0;
+}

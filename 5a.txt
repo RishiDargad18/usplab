@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <utime.h>
+#include <sys/stat.h>
+int main(int argc, char *argv[]) {
+    struct stat s;
+    struct utimbuf t;
+    if (stat(argv[1], &s) < 0) return 1;
+    t.actime = s.st_atime;
+    t.modtime = s.st_mtime;
+    if (utime(argv[2], &t) < 0) return 1;
+    return 0;
+}

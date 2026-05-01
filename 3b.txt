@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <time.h>
+int main(int argc, char *argv[]){
+    char *dir = (argc > 1) ? argv[1] : ".";
+    DIR *dp = opendir(dir);
+    struct dirent *d;
+    struct stat m;
+    if (!dp) return 1;
+    while ((d = readdir(dp))) {
+        stat(d->d_name, &m);
+        printf("%ld %o %d %d %s %s\n",
+               m.st_ino, m.st_mode, m.st_uid, m.st_gid,
+               ctime(&m.st_atime), d->d_name);
+    }
+    return 0;
+}
