@@ -22,6 +22,6 @@ int main() {
     int fd12 = 0;   // stdin
     dup2(fd11, fd12);
     printf("%d %d\n", fd11, fd12);
-    write(1, buf, 6);
+    write(fd12, buf, 6);
     return 0;
 }
